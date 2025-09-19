@@ -13,7 +13,7 @@
     <style>
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+            50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
         @keyframes gradientBG {
@@ -124,6 +124,66 @@
             animation: gradientBG 15s ease infinite;
             color: #e6e6e6;
         }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 640px) {
+            .mobile-text-xl {
+                font-size: 1.25rem;
+            }
+            .mobile-text-2xl {
+                font-size: 1.5rem;
+            }
+            .mobile-text-3xl {
+                font-size: 1.75rem;
+            }
+            .mobile-text-4xl {
+                font-size: 2rem;
+            }
+            .mobile-p-4 {
+                padding: 1rem;
+            }
+            .mobile-px-4 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .mobile-py-3 {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            .mobile-mb-4 {
+                margin-bottom: 1rem;
+            }
+            .mobile-mb-6 {
+                margin-bottom: 1.5rem;
+            }
+            .mobile-w-full {
+                width: 100%;
+            }
+            .mobile-flex-col {
+                flex-direction: column;
+            }
+            .mobile-space-y-4 > * + * {
+                margin-top: 1rem;
+            }
+            .floating {
+                animation: float 8s ease-in-out infinite;
+            }
+            .bubble {
+                display: none; /* Hide bubbles on very small screens */
+            }
+        }
+        
+        /* Prevent horizontal scrolling */
+        body, html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        /* Ensure buttons are touch-friendly */
+        button {
+            min-height: 44px;
+            min-width: 44px;
+        }
     </style>
 </head>
 <body class="min-h-screen gradient-bg text-white flex flex-col items-center justify-center p-4 overflow-hidden">
@@ -131,9 +191,9 @@
     <div id="bubbles"></div>
     
     <!-- Header with navigation -->
-    <header class="w-full max-w-4xl mx-auto py-4 flex justify-between items-center z-10" data-aos="fade-down">
+    <header class="w-full max-w-4xl mx-auto py-4 flex justify-between items-center z-10 mobile-px-4" data-aos="fade-down">
         <div class="flex items-center">
-            <h1 class="text-2xl font-bold">Daily<span class="challenge-text">Challenge</span></h1>
+            <h1 class="text-2xl font-bold mobile-text-xl">Daily<span class="challenge-text">Challenge</span></h1>
         </div>
         <div class="flex items-center space-x-4">
             <button id="theme-toggle" class="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-300 tooltip">
@@ -147,29 +207,29 @@
         </div>
     </header>
     
-    <main class="text-center max-w-4xl mx-auto z-10 w-full">
-        <h1 class="text-5xl md:text-6xl font-bold mb-6 floating" data-aos="fade-down">
+    <main class="text-center max-w-4xl mx-auto z-10 w-full mobile-px-4">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 floating mobile-text-4xl mobile-mb-4" data-aos="fade-down">
             Your Daily <span class="challenge-text">Fun Challenge!</span>
         </h1>
         
-        <p class="text-xl mb-10 opacity-90" data-aos="fade-up" data-aos-delay="100">
+        <p class="text-xl mb-10 opacity-90 mobile-text-xl mobile-mb-6" data-aos="fade-up" data-aos-delay="100">
             Get ready for a random mini-adventure to spice up your day!
         </p>
         
         <!-- Stats section -->
-        <div class="flex justify-center mb-8 gap-6 text-center" data-aos="fade-up" data-aos-delay="150">
-            <div class="bg-white bg-opacity-10 rounded-xl px-6 py-3 backdrop-blur-sm border border-white border-opacity-20">
-                <div class="text-2xl font-bold" id="completed-count">0</div>
+        <div class="flex justify-center mb-8 gap-6 text-center mobile-flex-col mobile-space-y-4 mobile-mb-6" data-aos="fade-up" data-aos-delay="150">
+            <div class="bg-white bg-opacity-10 rounded-xl px-6 py-3 backdrop-blur-sm border border-white border-opacity-20 mobile-w-full">
+                <div class="text-2xl font-bold mobile-text-2xl" id="completed-count">0</div>
                 <div class="text-sm opacity-80">Completed</div>
             </div>
-            <div class="bg-white bg-opacity-10 rounded-xl px-6 py-3 backdrop-blur-sm border border-white border-opacity-20">
-                <div class="text-2xl font-bold" id="streak-count">0</div>
+            <div class="bg-white bg-opacity-10 rounded-xl px-6 py-3 backdrop-blur-sm border border-white border-opacity-20 mobile-w-full">
+                <div class="text-2xl font-bold mobile-text-2xl" id="streak-count">0</div>
                 <div class="text-sm opacity-80">Day Streak</div>
             </div>
         </div>
         
         <!-- Progress bar -->
-        <div class="max-w-md mx-auto mb-8" data-aos="fade-up" data-aos-delay="200">
+        <div class="max-w-md mx-auto mb-8 mobile-w-full mobile-mb-6" data-aos="fade-up" data-aos-delay="200">
             <div class="flex justify-between text-sm mb-1">
                 <span>Daily Progress</span>
                 <span id="progress-percent">0%</span>
@@ -180,13 +240,13 @@
         </div>
         
         <!-- Challenge container -->
-        <div id="challenge-container" class="min-h-64 flex items-center justify-center my-8">
-            <div id="welcome-message" class="text-2xl px-6 py-8 bg-white bg-opacity-10 rounded-xl backdrop-blur-sm border border-white border-opacity-20 max-w-lg" data-aos="zoom-in">
+        <div id="challenge-container" class="min-h-64 flex items-center justify-center my-8 mobile-my-6">
+            <div id="welcome-message" class="text-2xl px-6 py-8 bg-white bg-opacity-10 rounded-xl backdrop-blur-sm border border-white border-opacity-20 max-w-lg mobile-text-xl mobile-p-4" data-aos="zoom-in">
                 <p>Ready for today's challenge? Click the button below to get started!</p>
             </div>
             
             <div id="challenge-display" class="hidden w-full max-w-2xl mx-auto">
-                <div class="challenge-card px-6 py-8 shadow-xl transform transition-all duration-500" data-aos="zoom-in">
+                <div class="challenge-card px-6 py-8 shadow-xl transform transition-all duration-500 mobile-p-4" data-aos="zoom-in">
                     <div class="mb-4 flex justify-between items-start">
                         <div id="category-tags"></div>
                         <button id="save-challenge" class="p-2 rounded-full bg-white bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 tooltip">
@@ -194,19 +254,19 @@
                             <span class="tooltiptext">Save Challenge</span>
                         </button>
                     </div>
-                    <p id="challenge-text" class="text-2xl md:text-3xl font-medium mb-6"></p>
+                    <p id="challenge-text" class="text-2xl md:text-3xl font-medium mb-6 mobile-text-2xl mobile-mb-4"></p>
                     <div id="challenge-difficulty" class="mb-4">
                         <div class="text-sm opacity-80 mb-1">Difficulty</div>
                         <div class="flex space-x-1">
-                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
-                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
-                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
-                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
-                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20 mobile-w-8"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20 mobile-w-8"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20 mobile-w-8"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20 mobile-w-8"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20 mobile-w-8"></div>
                         </div>
                     </div>
-                    <div id="timer-section" class="hidden mt-6">
-                        <div class="text-lg font-semibold mb-2">Time remaining: <span id="timer">05:00</span></div>
+                    <div id="timer-section" class="hidden mt-6 mobile-mt-4">
+                        <div class="text-lg font-semibold mb-2 mobile-text-xl">Time remaining: <span id="timer">05:00</span></div>
                         <div class="progress-bar">
                             <div class="progress-fill" id="timer-progress" style="width: 100%"></div>
                         </div>
@@ -216,18 +276,18 @@
         </div>
         
         <!-- Action buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <button id="get-challenge" class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-full hover:bg-indigo-100 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 pulse" data-aos="zoom-in" data-aos-delay="200">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8 mobile-mt-6">
+            <button id="get-challenge" class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-full hover:bg-indigo-100 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 pulse mobile-py-3 mobile-w-full" data-aos="zoom-in" data-aos-delay="200">
                 <i data-feather="zap"></i>
                 Give Me a Challenge!
             </button>
             
-            <button id="complete-challenge" class="px-8 py-4 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hidden" data-aos="zoom-in" data-aos-delay="250">
+            <button id="complete-challenge" class="px-8 py-4 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hidden mobile-py-3 mobile-w-full" data-aos="zoom-in" data-aos-delay="250">
                 <i data-feather="check-circle"></i>
                 I Did It!
             </button>
             
-            <button id="new-challenge" class="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white hover:bg-opacity-10 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hidden" data-aos="zoom-in" data-aos-delay="300">
+            <button id="new-challenge" class="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white hover:bg-opacity-10 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hidden mobile-py-3 mobile-w-full" data-aos="zoom-in" data-aos-delay="300">
                 <i data-feather="refresh-cw"></i>
                 New Challenge
             </button>
@@ -235,17 +295,17 @@
         
         <!-- Share buttons -->
         <div id="share-section" class="mt-6 hidden" data-aos="fade-up" data-aos-delay="350">
-            <p class="mb-3">Share this challenge with friends!</p>
-            <div class="flex justify-center space-x-4">
-                <button id="share-twitter" class="p-3 bg-twitter-blue text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip">
+            <p class="mb-3 mobile-mb-4">Share this challenge with friends!</p>
+            <div class="flex justify-center space-x-4 mobile-space-x-2">
+                <button id="share-twitter" class="p-3 bg-[#1DA1F2] text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip mobile-p-2">
                     <i data-feather="twitter"></i>
                     <span class="tooltiptext">Share on Twitter</span>
                 </button>
-                <button id="copy-link" class="p-3 bg-indigo-600 text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip">
+                <button id="copy-link" class="p-3 bg-indigo-600 text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip mobile-p-2">
                     <i data-feather="link"></i>
                     <span class="tooltiptext">Copy Link</span>
                 </button>
-                <button id="share-whatsapp" class="p-3 bg-green-600 text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip">
+                <button id="share-whatsapp" class="p-3 bg-green-600 text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip mobile-p-2">
                     <i data-feather="message-circle"></i>
                     <span class="tooltiptext">Share on WhatsApp</span>
                 </button>
@@ -254,10 +314,10 @@
     </main>
 
     <!-- Saved challenges modal -->
-    <div id="saved-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl max-w-md w-full mx-4 p-6 max-h-80 overflow-y-auto">
+    <div id="saved-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden mobile-p-4">
+        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl max-w-md w-full mx-4 p-6 max-h-80 overflow-y-auto mobile-max-h-64">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Saved Challenges</h3>
+                <h3 class="text-xl font-bold mobile-text-lg">Saved Challenges</h3>
                 <button id="close-saved" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
                     <i data-feather="x"></i>
                 </button>
@@ -272,10 +332,10 @@
     </div>
 
     <!-- Info modal -->
-    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl max-w-md w-full mx-4 p-6">
+    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden mobile-p-4">
+        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl max-w-md w-full mx-4 p-6 mobile-max-h-64 overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">About Daily Challenge</h3>
+                <h3 class="text-xl font-bold mobile-text-lg">About Daily Challenge</h3>
                 <button id="close-info" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
                     <i data-feather="x"></i>
                 </button>
@@ -286,7 +346,7 @@
         </div>
     </div>
 
-    <footer class="mt-16 text-sm opacity-70" data-aos="fade-up" data-aos-delay="400">
+    <footer class="mt-16 text-sm opacity-70 mobile-mt-10" data-aos="fade-up" data-aos-delay="400">
         Made with <i data-feather="heart" class="inline w-4 h-4 text-red-400"></i> for fun! • 
         <a href="#" class="underline hover:no-underline" id="view-saved">View Saved</a>
     </footer>
@@ -295,7 +355,8 @@
         // Initialize animations and icons
         AOS.init({
             duration: 800,
-            once: true
+            once: true,
+            disable: window.innerWidth < 640 ? true : false // Disable animations on mobile for performance
         });
         feather.replace();
         
@@ -419,16 +480,42 @@
             
             // Set up event listeners
             setupEventListeners();
+            
+            // Adjust for mobile on load
+            adjustForMobile();
+            
+            // Listen for resize events
+            window.addEventListener('resize', adjustForMobile);
+        }
+        
+        // Adjust layout for mobile
+        function adjustForMobile() {
+            if (window.innerWidth < 640) {
+                // Mobile adjustments
+                document.body.classList.add('mobile');
+                
+                // Adjust animation speeds for better mobile performance
+                const bubbles = document.querySelectorAll('.bubble');
+                bubbles.forEach(bubble => {
+                    bubble.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                });
+            } else {
+                document.body.classList.remove('mobile');
+            }
         }
         
         // Create floating bubbles
         function createBubbles() {
-            for (let i = 0; i < 20; i++) {
+            // Reduce number of bubbles on mobile
+            const bubbleCount = window.innerWidth < 640 ? 10 : 20;
+            
+            for (let i = 0; i < bubbleCount; i++) {
                 const bubble = document.createElement('div');
                 bubble.classList.add('bubble');
                 
-                // Random size between 20 and 100px
-                const size = Math.random() * 80 + 20;
+                // Random size between 20 and 100px (smaller on mobile)
+                const maxSize = window.innerWidth < 640 ? 60 : 100;
+                const size = Math.random() * (maxSize - 20) + 20;
                 bubble.style.width = `${size}px`;
                 bubble.style.height = `${size}px`;
                 
@@ -796,6 +883,16 @@
             document.getElementById('share-whatsapp').addEventListener('click', () => {
                 const text = `I just got this fun challenge: "${currentChallenge.text}"! Try it yourself at ${window.location.href}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === savedModal) {
+                    savedModal.classList.add('hidden');
+                }
+                if (e.target === infoModal) {
+                    infoModal.classList.add('hidden');
+                }
             });
         }
         
