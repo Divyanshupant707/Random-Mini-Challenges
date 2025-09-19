@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Daily Fun Challenge!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes typewriter {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        .gradient-bg {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+        .challenge-text {
+            background: linear-gradient(to right, #ff8a00, #e52e71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline;
+        }
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            z-index: -1;
+        }
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid orange;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typewriter 3s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: orange; }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        .challenge-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(to right, #ff8a00, #e52e71);
+            transition: width 0.5s ease;
+        }
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .dark-mode {
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #0a1931);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #e6e6e6;
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg text-white flex flex-col items-center justify-center p-4 overflow-hidden">
+    <!-- Floating bubbles background -->
+    <div id="bubbles"></div>
+    
+    <!-- Header with navigation -->
+    <header class="w-full max-w-4xl mx-auto py-4 flex justify-between items-center z-10" data-aos="fade-down">
+        <div class="flex items-center">
+            <h1 class="text-2xl font-bold">Daily<span class="challenge-text">Challenge</span></h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button id="theme-toggle" class="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-300 tooltip">
+                <i data-feather="moon"></i>
+                <span class="tooltiptext">Toggle Dark Mode</span>
+            </button>
+            <button id="info-btn" class="p-2 rounded-full bg-white bg-opacity-10 hover:bg-opacity-20 transition-all duration-300 tooltip">
+                <i data-feather="info"></i>
+                <span class="tooltiptext">About This Project</span>
+            </button>
+        </div>
+    </header>
+    
+    <main class="text-center max-w-4xl mx-auto z-10 w-full">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 floating" data-aos="fade-down">
+            Your Daily <span class="challenge-text">Fun Challenge!</span>
+        </h1>
+        
+        <p class="text-xl mb-10 opacity-90" data-aos="fade-up" data-aos-delay="100">
+            Get ready for a random mini-adventure to spice up your day!
+        </p>
+        
+        <!-- Stats section -->
+        <div class="flex justify-center mb-8 gap-6 text-center" data-aos="fade-up" data-aos-delay="150">
+            <div class="bg-white bg-opacity-10 rounded-xl px-6 py-3 backdrop-blur-sm border border-white border-opacity-20">
+                <div class="text-2xl font-bold" id="completed-count">0</div>
+                <div class="text-sm opacity-80">Completed</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-xl px-6 py-3 backdrop-blur-sm border border-white border-opacity-20">
+                <div class="text-2xl font-bold" id="streak-count">0</div>
+                <div class="text-sm opacity-80">Day Streak</div>
+            </div>
+        </div>
+        
+        <!-- Progress bar -->
+        <div class="max-w-md mx-auto mb-8" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex justify-between text-sm mb-1">
+                <span>Daily Progress</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Challenge container -->
+        <div id="challenge-container" class="min-h-64 flex items-center justify-center my-8">
+            <div id="welcome-message" class="text-2xl px-6 py-8 bg-white bg-opacity-10 rounded-xl backdrop-blur-sm border border-white border-opacity-20 max-w-lg" data-aos="zoom-in">
+                <p>Ready for today's challenge? Click the button below to get started!</p>
+            </div>
+            
+            <div id="challenge-display" class="hidden w-full max-w-2xl mx-auto">
+                <div class="challenge-card px-6 py-8 shadow-xl transform transition-all duration-500" data-aos="zoom-in">
+                    <div class="mb-4 flex justify-between items-start">
+                        <div id="category-tags"></div>
+                        <button id="save-challenge" class="p-2 rounded-full bg-white bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 tooltip">
+                            <i data-feather="bookmark"></i>
+                            <span class="tooltiptext">Save Challenge</span>
+                        </button>
+                    </div>
+                    <p id="challenge-text" class="text-2xl md:text-3xl font-medium mb-6"></p>
+                    <div id="challenge-difficulty" class="mb-4">
+                        <div class="text-sm opacity-80 mb-1">Difficulty</div>
+                        <div class="flex space-x-1">
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
+                            <div class="h-2 w-12 rounded-full bg-white bg-opacity-20"></div>
+                        </div>
+                    </div>
+                    <div id="timer-section" class="hidden mt-6">
+                        <div class="text-lg font-semibold mb-2">Time remaining: <span id="timer">05:00</span></div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="timer-progress" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <button id="get-challenge" class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-full hover:bg-indigo-100 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 pulse" data-aos="zoom-in" data-aos-delay="200">
+                <i data-feather="zap"></i>
+                Give Me a Challenge!
+            </button>
+            
+            <button id="complete-challenge" class="px-8 py-4 bg-green-500 text-white font-bold rounded-full hover:bg-green-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hidden" data-aos="zoom-in" data-aos-delay="250">
+                <i data-feather="check-circle"></i>
+                I Did It!
+            </button>
+            
+            <button id="new-challenge" class="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-full hover:bg-white hover:bg-opacity-10 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 hidden" data-aos="zoom-in" data-aos-delay="300">
+                <i data-feather="refresh-cw"></i>
+                New Challenge
+            </button>
+        </div>
+        
+        <!-- Share buttons -->
+        <div id="share-section" class="mt-6 hidden" data-aos="fade-up" data-aos-delay="350">
+            <p class="mb-3">Share this challenge with friends!</p>
+            <div class="flex justify-center space-x-4">
+                <button id="share-twitter" class="p-3 bg-twitter-blue text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip">
+                    <i data-feather="twitter"></i>
+                    <span class="tooltiptext">Share on Twitter</span>
+                </button>
+                <button id="copy-link" class="p-3 bg-indigo-600 text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip">
+                    <i data-feather="link"></i>
+                    <span class="tooltiptext">Copy Link</span>
+                </button>
+                <button id="share-whatsapp" class="p-3 bg-green-600 text-white rounded-full hover:opacity-90 transition-all duration-300 tooltip">
+                    <i data-feather="message-circle"></i>
+                    <span class="tooltiptext">Share on WhatsApp</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Saved challenges modal -->
+    <div id="saved-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl max-w-md w-full mx-4 p-6 max-h-80 overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Saved Challenges</h3>
+                <button id="close-saved" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <ul id="saved-list" class="space-y-2">
+                <!-- Saved challenges will appear here -->
+            </ul>
+            <p id="no-saved-message" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                You haven't saved any challenges yet.
+            </p>
+        </div>
+    </div>
+
+    <!-- Info modal -->
+    <div id="info-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white rounded-xl max-w-md w-full mx-4 p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">About Daily Challenge</h3>
+                <button id="close-info" class="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i data-feather="x"></i>
+                </button>
+            </div>
+            <p class="mb-4">Daily Challenge is a fun way to add excitement to your day with random mini-adventures and tasks!</p>
+            <p class="mb-4">Each challenge is categorized by type and difficulty to help you find the perfect activity for your mood.</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Made with <i data-feather="heart" class="inline w-4 h-4 text-red-400"></i> for fun!</p>
+        </div>
+    </div>
+
+    <footer class="mt-16 text-sm opacity-70" data-aos="fade-up" data-aos-delay="400">
+        Made with <i data-feather="heart" class="inline w-4 h-4 text-red-400"></i> for fun! • 
+        <a href="#" class="underline hover:no-underline" id="view-saved">View Saved</a>
+    </footer>
+
+    <script>
+        // Initialize animations and icons
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+        feather.replace();
+        
+        // Enhanced challenge database with categories and difficulty
+        const challenges = [
+            { text: "Draw a monster in 1 minute", category: "creative", difficulty: 2 },
+            { text: "Try a new hairstyle today", category: "style", difficulty: 3 },
+            { text: "Sing your favorite song loudly", category: "fun", difficulty: 1 },
+            { text: "Learn a magic trick and perform it", category: "learning", difficulty: 4 },
+            { text: "Dance like nobody's watching for 3 minutes", category: "fun", difficulty: 1 },
+            { text: "Write a short poem about your day", category: "creative", difficulty: 3 },
+            { text: "Take a silly selfie and make it your profile pic", category: "fun", difficulty: 2 },
+            { text: "Try speaking in an accent for 10 minutes", category: "fun", difficulty: 3 },
+            { text: "Do 10 jumping jacks right now", category: "fitness", difficulty: 1 },
+            { text: "Tell a joke to the next person you see", category: "social", difficulty: 2 },
+            { text: "Create a new handshake with a friend", category: "social", difficulty: 3 },
+            { text: "Wear your clothes inside out for an hour", category: "dare", difficulty: 3 },
+            { text: "Walk backwards for 50 steps", category: "dare", difficulty: 2 },
+            { text: "Make up a new word and use it in conversation", category: "creative", difficulty: 3 },
+            { text: "Balance something on your head for 1 minute", category: "skill", difficulty: 2 },
+            { text: "Try eating a food you've never had before", category: "food", difficulty: 3 },
+            { text: "Do your best animal impression", category: "fun", difficulty: 1 },
+            { text: "Give yourself a high five in the mirror", category: "fun", difficulty: 1 },
+            { text: "Write a thank you note to someone", category: "kindness", difficulty: 2 },
+            { text: "Try to touch your toes (or get as close as you can)", category: "fitness", difficulty: 2 },
+            { text: "Learn to say 'hello' in 3 new languages", category: "learning", difficulty: 2 },
+            { text: "Compliment three people today", category: "kindness", difficulty: 2 },
+            { text: "Take a 5-minute meditation break", category: "wellness", difficulty: 2 },
+            { text: "Create a mini obstacle course in your living space", category: "fun", difficulty: 3 },
+            { text: "Try writing with your non-dominant hand for 10 minutes", category: "skill", difficulty: 3 }
+        ];
+        
+        // Category colors
+        const categoryColors = {
+            creative: "bg-pink-500",
+            style: "bg-purple-500",
+            fun: "bg-yellow-500",
+            learning: "bg-blue-500",
+            fitness: "bg-green-500",
+            social: "bg-indigo-500",
+            dare: "bg-red-500",
+            skill: "bg-teal-500",
+            food: "bg-orange-500",
+            kindness: "bg-cyan-500",
+            wellness: "bg-lime-500"
+        };
+        
+        // Category names for display
+        const categoryNames = {
+            creative: "Creative",
+            style: "Style",
+            fun: "Fun",
+            learning: "Learning",
+            fitness: "Fitness",
+            social: "Social",
+            dare: "Dare",
+            skill: "Skill",
+            food: "Food",
+            kindness: "Kindness",
+            wellness: "Wellness"
+        };
+        
+        // DOM elements
+        const challengeText = document.getElementById('challenge-text');
+        const challengeDisplay = document.getElementById('challenge-display');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const getChallengeBtn = document.getElementById('get-challenge');
+        const newChallengeBtn = document.getElementById('new-challenge');
+        const completeChallengeBtn = document.getElementById('complete-challenge');
+        const bubblesContainer = document.getElementById('bubbles');
+        const categoryTags = document.getElementById('category-tags');
+        const difficultyIndicator = document.querySelectorAll('#challenge-difficulty .h-2');
+        const timerSection = document.getElementById('timer-section');
+        const timerElement = document.getElementById('timer');
+        const timerProgress = document.getElementById('timer-progress');
+        const shareSection = document.getElementById('share-section');
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        const completedCount = document.getElementById('completed-count');
+        const streakCount = document.getElementById('streak-count');
+        const themeToggle = document.getElementById('theme-toggle');
+        const savedModal = document.getElementById('saved-modal');
+        const savedList = document.getElementById('saved-list');
+        const noSavedMessage = document.getElementById('no-saved-message');
+        const viewSavedLink = document.getElementById('view-saved');
+        const closeSaved = document.getElementById('close-saved');
+        const saveChallengeBtn = document.getElementById('save-challenge');
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        const closeInfo = document.getElementById('close-info');
+        
+        // User data
+        let userData = {
+            completed: 0,
+            streak: 0,
+            lastCompleted: null,
+            saved: []
+        };
+        
+        // Current challenge
+        let currentChallenge = null;
+        let timerInterval = null;
+        
+        // Initialize the page
+        function init() {
+            createBubbles();
+            loadUserData();
+            updateProgressBar();
+            updateStats();
+            
+            // Check if we should show a challenge from localStorage
+            const lastChallenge = localStorage.getItem('lastChallenge');
+            if (lastChallenge) {
+                try {
+                    const challenge = JSON.parse(lastChallenge);
+                    showChallenge(challenge);
+                } catch (e) {
+                    console.error("Error parsing saved challenge", e);
+                }
+            }
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+        
+        // Create floating bubbles
+        function createBubbles() {
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // Random size between 20 and 100px
+                const size = Math.random() * 80 + 20;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // Random position
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation duration and delay
+                bubble.style.animation = `float ${Math.random() * 10 + 5}s ease-in-out infinite`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                
+                bubblesContainer.appendChild(bubble);
+            }
+        }
+        
+        // Load user data from localStorage
+        function loadUserData() {
+            const savedData = localStorage.getItem('challengeUserData');
+            if (savedData) {
+                try {
+                    userData = JSON.parse(savedData);
+                    
+                    // Check and update streak
+                    updateStreak();
+                } catch (e) {
+                    console.error("Error parsing user data", e);
+                }
+            }
+        }
+        
+        // Save user data to localStorage
+        function saveUserData() {
+            localStorage.setItem('challengeUserData', JSON.stringify(userData));
+        }
+        
+        // Update streak based on last completion date
+        function updateStreak() {
+            if (!userData.lastCompleted) return;
+            
+            const lastCompleted = new Date(userData.lastCompleted);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            // Reset streak if it's been more than 1 day
+            if (lastCompleted.toDateString() === yesterday.toDateString()) {
+                // Continue streak
+                userData.streak += 1;
+            } else if (lastCompleted.toDateString() !== today.toDateString()) {
+                // Reset streak if it's not today or yesterday
+                userData.streak = 0;
+            }
+            
+            saveUserData();
+            updateStats();
+        }
+        
+        // Update stats display
+        function updateStats() {
+            completedCount.textContent = userData.completed;
+            streakCount.textContent = userData.streak;
+        }
+        
+        // Update progress bar
+        function updateProgressBar() {
+            // For demo purposes, we'll set progress based on completed challenges
+            const progress = Math.min(userData.completed * 10, 100);
+            progressFill.style.width = `${progress}%`;
+            progressPercent.textContent = `${progress}%`;
+        }
+        
+        // Get a random challenge that hasn't been shown recently
+        function getRandomChallenge() {
+            // Filter out the current challenge if it exists
+            const availableChallenges = currentChallenge 
+                ? challenges.filter(c => c.text !== currentChallenge.text)
+                : challenges;
+            
+            const randomIndex = Math.floor(Math.random() * availableChallenges.length);
+            return availableChallenges[randomIndex];
+        }
+        
+        // Display challenge with animation
+        function displayChallenge() {
+            const challenge = getRandomChallenge();
+            showChallenge(challenge);
+            
+            // Store in localStorage
+            localStorage.setItem('lastChallenge', JSON.stringify(challenge));
+        }
+        
+        // Show challenge with animations
+        function showChallenge(challenge) {
+            currentChallenge = challenge;
+            
+            // Hide welcome message, show challenge display
+            welcomeMessage.classList.add('hidden');
+            challengeDisplay.classList.remove('hidden');
+            
+            // Hide get challenge button, show action buttons
+            getChallengeBtn.classList.add('hidden');
+            newChallengeBtn.classList.remove('hidden');
+            completeChallengeBtn.classList.remove('hidden');
+            shareSection.classList.remove('hidden');
+            
+            // Set category tags
+            categoryTags.innerHTML = '';
+            const categoryTag = document.createElement('span');
+            categoryTag.classList.add('category-tag', categoryColors[challenge.category]);
+            categoryTag.textContent = categoryNames[challenge.category];
+            categoryTags.appendChild(categoryTag);
+            
+            // Set difficulty indicator
+            difficultyIndicator.forEach((dot, index) => {
+                if (index < challenge.difficulty) {
+                    dot.classList.add('bg-white');
+                } else {
+                    dot.classList.remove('bg-white');
+                }
+            });
+            
+            // Typewriter effect for challenge text
+            let i = 0;
+            challengeText.textContent = '';
+            const typing = setInterval(() => {
+                if (i < challenge.text.length) {
+                    challengeText.textContent += challenge.text.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typing);
+                    // Trigger confetti
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                    
+                    // Start timer for timed challenges
+                    if (challenge.category === 'fitness' || challenge.difficulty > 3) {
+                        startTimer(300); // 5 minutes
+                    }
+                }
+            }, 50);
+        }
+        
+        // Start a countdown timer
+        function startTimer(seconds) {
+            timerSection.classList.remove('hidden');
+            let timeLeft = seconds;
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            // Update timer immediately
+            updateTimerDisplay(timeLeft);
+            
+            // Set up timer interval
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerSection.classList.add('hidden');
+                    
+                    // Show completion message
+                    confetti({
+                        particleCount: 200,
+                        spread: 100,
+                        origin: { y: 0.6 }
+                    });
+                }
+                
+                updateTimerDisplay(timeLeft);
+            }, 1000);
+        }
+        
+        // Update timer display
+        function updateTimerDisplay(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            
+            // Update progress bar
+            const progress = (seconds / 300) * 100;
+            timerProgress.style.width = `${progress}%`;
+        }
+        
+        // Complete the current challenge
+        function completeChallenge() {
+            userData.completed += 1;
+            userData.lastCompleted = new Date().toISOString();
+            
+            // Update streak
+            updateStreak();
+            
+            // Save data
+            saveUserData();
+            
+            // Update UI
+            updateStats();
+            updateProgressBar();
+            
+            // Show celebration
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 }
+            });
+            
+            // Hide complete button
+            completeChallengeBtn.classList.add('hidden');
+        }
+        
+        // Save current challenge to saved list
+        function saveCurrentChallenge() {
+            if (!currentChallenge) return;
+            
+            // Check if already saved
+            if (!userData.saved.some(c => c.text === currentChallenge.text)) {
+                userData.saved.push(currentChallenge);
+                saveUserData();
+                
+                // Show feedback
+                const saveIcon = saveChallengeBtn.querySelector('i');
+                const originalIcon = saveIcon.getAttribute('data-feather');
+                feather.icons.bookmark.replaceFeather(saveIcon);
+                
+                setTimeout(() => {
+                    feather.icons[originalIcon].replaceFeather(saveIcon);
+                }, 1000);
+            }
+        }
+        
+        // Show saved challenges modal
+        function showSavedModal() {
+            if (userData.saved.length === 0) {
+                noSavedMessage.classList.remove('hidden');
+                savedList.classList.add('hidden');
+            } else {
+                noSavedMessage.classList.add('hidden');
+                savedList.classList.remove('hidden');
+                
+                // Clear existing list
+                savedList.innerHTML = '';
+                
+                // Add saved challenges
+                userData.saved.forEach((challenge, index) => {
+                    const li = document.createElement('li');
+                    li.classList.add('p-3', 'rounded-lg', 'bg-gray-100', 'dark:bg-gray-700');
+                    
+                    const categoryTag = document.createElement('span');
+                    categoryTag.classList.add('category-tag', categoryColors[challenge.category], 'text-xs');
+                    categoryTag.textContent = categoryNames[challenge.category];
+                    
+                    li.appendChild(categoryTag);
+                    li.appendChild(document.createTextNode(challenge.text));
+                    
+                    // Add remove button
+                    const removeBtn = document.createElement('button');
+                    removeBtn.classList.add('float-right', 'p-1', 'rounded-full', 'hover:bg-gray-300', 'dark:hover:bg-gray-600');
+                    removeBtn.innerHTML = feather.icons.x.toSvg({ width: 16, height: 16 });
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeSavedChallenge(index);
+                    });
+                    
+                    li.appendChild(removeBtn);
+                    savedList.appendChild(li);
+                });
+            }
+            
+            savedModal.classList.remove('hidden');
+        }
+        
+        // Remove saved challenge
+        function removeSavedChallenge(index) {
+            userData.saved.splice(index, 1);
+            saveUserData();
+            showSavedModal();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            getChallengeBtn.addEventListener('click', displayChallenge);
+            newChallengeBtn.addEventListener('click', () => {
+                challengeDisplay.classList.add('hidden');
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerSection.classList.add('hidden');
+                }
+                setTimeout(() => {
+                    displayChallenge();
+                }, 300);
+            });
+            
+            completeChallengeBtn.addEventListener('click', completeChallenge);
+            saveChallengeBtn.addEventListener('click', saveCurrentChallenge);
+            viewSavedLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSavedModal();
+            });
+            
+            closeSaved.addEventListener('click', () => {
+                savedModal.classList.add('hidden');
+            });
+            
+            infoBtn.addEventListener('click', () => {
+                infoModal.classList.remove('hidden');
+            });
+            
+            closeInfo.addEventListener('click', () => {
+                infoModal.classList.add('hidden');
+            });
+            
+            // Theme toggle
+            themeToggle.addEventListener('click', () => {
+                const body = document.body;
+                const isDark = body.classList.contains('dark-mode');
+                const themeIcon = themeToggle.querySelector('i');
+                
+                if (isDark) {
+                    body.classList.remove('dark-mode');
+                    body.classList.add('gradient-bg');
+                    feather.icons.moon.replaceFeather(themeIcon);
+                } else {
+                    body.classList.remove('gradient-bg');
+                    body.classList.add('dark-mode');
+                    feather.icons.sun.replaceFeather(themeIcon);
+                }
+                
+                // Save theme preference
+                localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            });
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.remove('gradient-bg');
+                document.body.classList.add('dark-mode');
+                const themeIcon = themeToggle.querySelector('i');
+                feather.icons.sun.replaceFeather(themeIcon);
+            }
+            
+            // Share buttons
+            document.getElementById('share-twitter').addEventListener('click', () => {
+                const text = `I just got this fun challenge: "${currentChallenge.text}"! Try it yourself at ${window.location.href}`;
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+            });
+            
+            document.getElementById('copy-link').addEventListener('click', () => {
+                const text = `Check out this fun challenge: "${currentChallenge.text}"! Try it yourself at ${window.location.href}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    const icon = document.getElementById('copy-link').querySelector('i');
+                    const originalIcon = icon.getAttribute('data-feather');
+                    feather.icons.check.replaceFeather(icon);
+                    
+                    setTimeout(() => {
+                        feather.icons[originalIcon].replaceFeather(icon);
+                    }, 2000);
+                });
+            });
+            
+            document.getElementById('share-whatsapp').addEventListener('click', () => {
+                const text = `I just got this fun challenge: "${currentChallenge.text}"! Try it yourself at ${window.location.href}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+            });
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
